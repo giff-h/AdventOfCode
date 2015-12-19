@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[19]:
+# In[2]:
 
 input_file = open("input.txt")
 data = [line.strip() for line in input_file.readlines()]
@@ -25,7 +25,7 @@ def bool_to_chr(grid):
     return [''.join('#' if i else '.' for i in line) for line in grid]
 
 
-# In[25]:
+# In[5]:
 
 def neighbors(grid, x, y):
     ymax = len(grid)
@@ -33,10 +33,10 @@ def neighbors(grid, x, y):
     if len(xmax) > 1:
         raise "Error: Grid not rectangular! " + str(xmax)
     xmax = xmax[0]
-    xstart = (0 if x == 0 else x-1) # left side
-    ystart = (0 if y == 0 else y-1) # top side
-    xend = (xmax if x == xmax-1 else x+2) # right side ; +2 because range stops one short
-    yend = (ymax if y == ymax-1 else y+2) # bottom side
+    xstart = 0 if x == 0 else x-1 # left side
+    ystart = 0 if y == 0 else y-1 # top side
+    xend = xmax if x == xmax-1 else x+2 # right side ; +2 because range stops one short
+    yend = ymax if y == ymax-1 else y+2 # bottom side
     ret = []
     for ix in range(xstart, xend):
         for iy in range(ystart, yend):
@@ -55,7 +55,7 @@ def switch(light, surround):
         return surround.count(True) == 3
 
 
-# In[40]:
+# In[7]:
 
 def step(grid, n=1, part2=False):
     stepped = [[switch(light, neighbors(grid, x, y)) for x, light in enumerate(row)] for y, row in enumerate(grid[:])]
@@ -70,17 +70,17 @@ def step(grid, n=1, part2=False):
     return stepped
 
 
-# In[38]:
+# In[8]:
 
 lights = chr_to_bool(data)
 
 
-# In[37]:
+# In[9]:
 
 print(sum(row.count(True) for row in step(lights, 100)))
 
 
-# In[50]:
+# In[10]:
 
 lights[0][0] = True
 lights[0][-1] = True
@@ -88,7 +88,7 @@ lights[-1][0] = True
 lights[-1][-1] = True
 
 
-# In[51]:
+# In[11]:
 
 print(sum(row.count(True) for row in step(lights, 100, True)))
 
