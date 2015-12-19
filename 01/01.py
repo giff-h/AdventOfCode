@@ -1,30 +1,47 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[2]:
 
-input_file = open("input.txt")
-data = input_file.read()
-input_file.close()
+def main():
+    with open("input.txt") as file:
+        data = file.read()
+    if "\n" in data:
+        data = data.split("\n")
+    data = process_input(data)
+    part1 = evalp1(data)
+    print("Part 1:")
+    print(part1[0])
+    print("Part 2:")
+    print(evalp2(data, part1[1]))
 
 
-# In[14]:
+# In[3]:
 
-print(data.count('(') - data.count(')'))
+def process_input(inp):
+    return inp
 
 
-# In[21]:
+# In[4]:
 
-i = 0
-floor = 0
-while True:
-    c = data[i]
-    if c == "(":
-        floor += 1
-    elif c == ")":
-        floor -= 1
-    i += 1
-    if floor == -1:
-        break
-print(i)
+def evalp1(data):
+    floorup = '('
+    floordown = ')'
+    return (data.count(floorup) - data.count(floordown), {floorup: 1, floordown: -1})
+
+
+# In[5]:
+
+def evalp2(data, part1):
+    floor = 0
+    i = 0
+    while floor >= 0:
+        floor += part1[data[i]]
+        i += 1
+    return i
+
+
+# In[6]:
+
+main()
 
