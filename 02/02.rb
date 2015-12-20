@@ -11,24 +11,20 @@ def main
 end
 
 def process_input(input)
-  input
+  return input.collect { |line| line.split('x').collect { |i| i.to_i }.sort }
 end
 
 def evalp1(data, graphics)
-  floorup = '('
-  floordown = ')'
-  return [data.count(floorup) - data.count(floordown), {floorup => 1, floordown => -1}]
+  return [data.inject(0) { |sum, box| sum + wrapping(box) }, nil]
 end
 
 def evalp2(data, part1, graphics)
-  step = part1
-  floor = 0
-  i = 0
-  until floor < 0 do
-    floor += step[data[i]]
-    i += 1
-  end
-  return i
+  return data.inject(0) { |sum, box| sum + 2*box[0] + 2*box[1] + box.inject(:*) }
+end
+
+def wrapping(box)
+  h, l, w = box
+  return 3*h*l + 2*h*w + 2*l*w # 3hl because adding another for slack
 end
 
 main
