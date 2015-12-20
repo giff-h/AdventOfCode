@@ -1,39 +1,81 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[16]:
 
 import re
+vowels = re.compile("([aoeui].*){3}")
+
+
+# In[1]:
+
+graphics = False
+
+
+# In[26]:
+
+def main():
+    with open("input.txt") as file:
+        data = file.read().strip()
+    if "\n" in data:
+        data = data.split("\n")
+    data = process_input(data)
+    part1 = evalp1(data, graphics)
+    print("Part 1:")
+    print(part1[0])
+    print("Part 2:")
+    print(evalp2(data, part1[1], graphics))
 
 
 # In[4]:
 
-input_file = open("input.txt")
-data = input_file.readlines()
-input_file.close()
+def process_input(inp):
+    return inp
 
 
-# In[10]:
+# In[12]:
 
-vowels = re.compile('[aoeui].*[aoeui].*[aoeui]')
-def has_double(nice):
-    for i in range(len(nice)-1):
-        if nice[i] == nice[i+1]:
-            return True
-    return False
-len([nice for nice in data if vowels.search(nice) and has_double(nice) and not 'ab' in nice and not 'cd' in nice and not 'pq' in nice and not 'xy' in nice])
+def evalp1(data, graphics):
+    return (len(list(0 for word in data if p1rule1(word) and p1rule2(word) and p1rule3(word))), None)
+
+
+# In[28]:
+
+def evalp2(data, part1, graphics):
+    return len(list(0 for word in data if p2rule1(word) and p2rule2(word)))
 
 
 # In[19]:
 
-def is_nice(nice):
-    dual_pair = False
-    split_by_one = False
-    for i in range(len(nice)-1):
-        if nice.count(nice[i:i+2]) > 1:
-            dual_pair = True
-        if i < len(nice)-2 and nice[i] == nice[i+2]:
-            split_by_one = True
-    return dual_pair and split_by_one
-len([nice for nice in data if is_nice(nice)])
+def p1rule1(word):
+    return vowels.search(word)
+
+
+# In[6]:
+
+def p1rule2(word):
+    return any(word[i] == word[i+1] for i in range(len(word)-1))
+
+
+# In[8]:
+
+def p1rule3(word):
+    return all(x not in word for x in ["ab", "cd", "pq", "xy"])
+
+
+# In[24]:
+
+def p2rule1(word):
+    return any(word[i:i+2] in word[i+2:] for i in range(len(word)-3))
+
+
+# In[23]:
+
+def p2rule2(word):
+    return any(word[i] == word[i+2] for i in range(len(word)-2))
+
+
+# In[29]:
+
+main()
 
