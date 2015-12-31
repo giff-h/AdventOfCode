@@ -1,0 +1,179 @@
+inp = """Al => ThF
+Al => ThRnFAr
+B => BCa
+B => TiB
+B => TiRnFAr
+Ca => CaCa
+Ca => PB
+Ca => PRnFAr
+Ca => SiRnFYFAr
+Ca => SiRnMgAr
+Ca => SiTh
+F => CaF
+F => PMg
+F => SiAl
+H => CRnAlAr
+H => CRnFYFYFAr
+H => CRnFYMgAr
+H => CRnMgYFAr
+H => HCa
+H => NRnFYFAr
+H => NRnMgAr
+H => NTh
+H => OB
+H => ORnFAr
+Mg => BF
+Mg => TiMg
+N => CRnFAr
+N => HSi
+O => CRnFYFAr
+O => CRnMgAr
+O => HP
+O => NRnFAr
+O => OTi
+P => CaP
+P => PTi
+P => SiRnFAr
+Si => CaSi
+Th => ThCa
+Ti => BP
+Ti => TiTi
+e => HF
+e => NAl
+e => OMg
+
+CRnCaCaCaSiRnBPTiMgArSiRnSiRnMgArSiRnCaFArTiTiBSiThFYCaFArCaCaSiThCaPBSiThSiThCaCaPTiRnPBSiThRnFArArCaCaSiThCaSiThSiRnMgArCaPTiBPRnFArSiThCaSiRnFArBCaSiRnCaPRnFArPMgYCaFArCaPTiTiTiBPBSiThCaPTiBPBSiRnFArBPBSiRnCaFArBPRnSiRnFArRnSiRnBFArCaFArCaCaCaSiThSiThCaCaPBPTiTiRnFArCaPTiBSiAlArPBCaCaCaCaCaSiRnMgArCaSiThFArThCaSiThCaSiRnCaFYCaSiRnFYFArFArCaSiRnFYFArCaSiRnBPMgArSiThPRnFArCaSiRnFArTiRnSiRnFYFArCaSiRnBFArCaSiRnTiMgArSiThCaSiThCaFArPRnFArSiRnFArTiTiTiTiBCaCaSiRnCaCaFYFArSiThCaPTiBPTiBCaSiThSiRnMgArCaF"""
+
+
+class Node:
+    def __init__(self, replace, new):
+        self.replace = replace
+        self.new = new
+        self.parent = None
+        self.children = []
+        self.live = True
+
+    def add_child(self, child):
+        self.children.append(child)
+        child.parent = self
+
+    def is_root(self):
+        return self.parent is None
+
+    def is_leaf(self):
+        return len(self.children) == 0
+
+    def result_str(self):
+        result = "" if self.is_root() else self.parent.result_str()
+        return result[:self.replace[0]] + self.new + result[self.replace[1]:]
+
+    def root(self):
+        if self.is_root():
+            return self
+        return self.parent.root()
+
+    def nodes(self):
+        nodes = []
+        if self.live:
+            nodes.append(self)
+        for child in self.children:
+            for node in child.nodes():
+                if node.live:
+                    nodes.append(node)
+        return nodes
+
+    def leafs(self):
+        for node in self.nodes():
+            if node.is_leaf():
+                yield node
+
+
+def swap(molecule, sub):
+    molecules = set()
+    if sub[0] in molecule:
+        i = molecule.find(sub[0])
+        while i >= 0:
+            molecules.add(molecule[:i] + sub[1] + molecule[i+len(sub[0]):])
+            i = molecule.find(sub[0], i+1)
+    return molecules
+
+
+def grow(build, sub, target):
+    molecule = build.result_str()
+    if sub[0] in molecule:
+        i = molecule.find(sub[0])
+        while i >= 0:
+            result = molecule[:i] + sub[1] + molecule[i+len(sub[0]):]
+            # print(sub)
+            # print(result)
+            if any(map(lambda node: node.result_str() == result, build.root().nodes())):
+                i = molecule.find(sub[0], i + 1)
+                continue
+            if target == result:
+                return True
+            if len(result) > len(target):
+                return False
+            new = Node((i, i+len(sub[0])), sub[1])
+            build.add_child(new)
+            i = molecule.find(sub[0], i + 1)
+    if len(build.children) == 0:
+        build.live = False
+    return False
+
+
+def process_input():
+    with open("input.txt") as file:
+        data = file.read().splitlines()
+    # data = inp.splitlines()
+
+    molecule = data[-1]
+    # molecule = "HOH"
+    # subs = [('e', 'H'),
+    #         ('e', 'O'),
+    #         ('H', 'HO'),
+    #         ('H', 'OH'),
+    #         ('O', 'HH')]
+    subs = [tuple(line.split(' => ')) for line in data[:-2]]
+
+    return subs, molecule
+
+
+def evalp1(data):
+    subs, molecule = data
+    molecules = set()
+
+    for sub in subs:
+        molecules.update(swap(molecule, sub))
+
+    return len(molecules)
+
+
+def evalp2(data):
+    subs, molecule = data
+    subs = [tuple(reversed(sub)) for sub in subs]
+    steps = 0
+    root = Node((0, 0), molecule)
+    target = 'e'
+    while True:
+        steps += 1
+        builds = list(root.leafs())
+        for i, build in enumerate(builds):
+            if i == len(builds) // 2:
+                print(build.result_str())
+                print('-----')
+            for sub in subs:
+                if grow(build, sub, molecule):
+                    return steps
+
+
+def main():
+    data = process_input()
+    part1 = evalp1(data)
+    print("Part 1:")
+    print(part1)
+    print("Part 2:")
+    print(evalp2(data))
+
+
+if __name__ == "__main__":
+    main()
