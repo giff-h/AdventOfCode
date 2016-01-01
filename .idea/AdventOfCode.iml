@@ -4,7 +4,5 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="jdk" jdkName="Python 3.5.1 virtualenv at ~/.virtualenvs/moin" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="SynacorChallenge" />
-    <orderEntry type="module" module-name="h85collections" />
   </component>
 </module>
