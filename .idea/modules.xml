@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AdventOfCode.iml" filepath="$PROJECT_DIR$/.idea/AdventOfCode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../SynacorChallenge/.idea/SynacorChallenge.iml" filepath="$PROJECT_DIR$/../SynacorChallenge/.idea/SynacorChallenge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../h85collections/.idea/h85collections.iml" filepath="$PROJECT_DIR$/../h85collections/.idea/h85collections.iml" />
     </modules>
   </component>
 </project>
